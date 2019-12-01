@@ -56,7 +56,7 @@ def process_log_file(cur, filepath):
             songid, artistid = None, None
 
         # insert songplay record
-        songplay_data = (index, row.ts, row.userId, songid, artistid, row.sessionId, row.location, row.userAgent))
+        songplay_data = (index, row.ts, row.userId, songid, artistid, row.sessionId, row.location, row.userAgent)
         cur.execute(songplay_table_insert, songplay_data)
 
 
@@ -80,7 +80,7 @@ def process_data(cur, conn, filepath, func):
 
 
 def main():
-    conn = psycopg2.connect("host=127.0.0.1 dbname=sparkifydb user=student password=student")
+    conn = psycopg2.connect("host=0.0.0.0 port=54320 dbname=sparkifydb user=postgres")
     cur = conn.cursor()
 
     process_data(cur, conn, filepath='data/song_data', func=process_song_file)
