@@ -5,6 +5,16 @@ import pandas as pd
 from sql_queries import *
 
 
+"""
+    This function processes Song JSON from a Filepath
+    and save the song data and artist data to the respective tables
+
+    Input:
+    cur -> refers to the cursor to the database
+    filepath -> filepath string to the json files
+"""
+
+
 def process_song_file(cur, filepath):
     # open song file
     df = pd.read_json(filepath, lines=True)
@@ -12,10 +22,20 @@ def process_song_file(cur, filepath):
     # insert song record
     song_data = df[["song_id", "title", "artist_id", "year", "duration"]].values.tolist()
     cur.execute(song_table_insert, song_data[0])
-    
+
     # insert artist record
     artist_data = df[["artist_id", "artist_name", "artist_location", "artist_latitude", "artist_longitude"]].values.tolist()
     cur.execute(artist_table_insert, artist_data[0])
+
+
+"""
+    This function processes Log JSON from a Filepath
+    and save time data and songplay records
+
+    Input:
+    cur -> refers to the cursor to the database
+    filepath -> filepath string to the json files
+"""
 
 
 def process_log_file(cur, filepath):
@@ -27,7 +47,7 @@ def process_log_file(cur, filepath):
     df['ts'] = pd.to_datetime(df['ts'], unit='ms')
     # convert timestamp column to datetime
     t = pd.to_datetime(df['ts'], unit='ms')
-    
+
     # insert time data records
     time_data = list((t, t.dt.hour, t.dt.day, t.dt.weekofyear, t.dt.month, t.dt.year, t.dt.weekday))
     column_labels = list(("start_time", "hour", "day", "week", "month", "year", "weekday"))
@@ -45,19 +65,25 @@ def process_log_file(cur, filepath):
 
     # insert songplay records
     for index, row in df.iterrows():
-        
+
         # get songid and artistid from song and artist tables
         cur.execute(song_select, (row.song, row.artist, row.length))
         results = cur.fetchone()
-        
+
         if results:
             songid, artistid = results
         else:
             songid, artistid = None, None
 
         # insert songplay record
-        songplay_data = (index, row.ts, row.userId, songid, artistid, row.sessionId, row.location, row.userAgent)
+        songplay_data = (row.ts, row.userId, songid, artistid, row.sessionId, row.location, row.userAgent)
         cur.execute(songplay_table_insert, songplay_data)
+
+
+"""
+    The process_data function loops all the files in the directory
+    and return the files
+"""
 
 
 def process_data(cur, conn, filepath, func):
@@ -77,6 +103,14 @@ def process_data(cur, conn, filepath, func):
         func(cur, datafile)
         conn.commit()
         print('{}/{} files processed.'.format(i, num_files))
+
+
+"""
+    The main function connects to the database and get the cursor.
+    The function also calls to the above process song and log data
+
+    Once all excuted the the database connection si closed.
+"""
 
 
 def main():

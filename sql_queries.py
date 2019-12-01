@@ -10,9 +10,9 @@ time_table_drop = "DROP table IF EXISTS time"
 
 songplay_table_create = ("""
     CREATE TABLE IF NOT EXISTS songplays (
-        songplay_id int PRIMARY KEY,
-        start_time text,
-        user_id int,
+        songplay_id serial PRIMARY KEY,
+        start_time text NOT NULL,
+        user_id int NOT NULL,
         song_id text,
         artist_id text,
         session_id int,
@@ -23,7 +23,7 @@ songplay_table_create = ("""
 user_table_create = ("""
     CREATE TABLE IF NOT EXISTS users (
         user_id SERIAL PRIMARY KEY,
-        first_name text,
+        first_name text NOT NULL,
         last_name text,
         gender text,
         level text)
@@ -32,8 +32,8 @@ user_table_create = ("""
 song_table_create = ("""
     CREATE TABLE IF NOT EXISTS songs (
         song_id text PRIMARY KEY,
-        title text,
-        artist_id text,
+        title text NOT NULL,
+        artist_id text NOT NULL,
         year int,
         duration float
         )
@@ -42,7 +42,7 @@ song_table_create = ("""
 artist_table_create = ("""
     CREATE TABLE IF NOT EXISTS artists (
         artist_id text PRIMARY KEY,
-        name text,
+        name text NOT NULL,
         location text,
         latitude float,
         longitude float)
@@ -63,7 +63,6 @@ time_table_create = ("""
 
 songplay_table_insert = ("""
     INSERT INTO songplays (
-        songplay_id,
         start_time,
         user_id,
         song_id,
@@ -71,7 +70,7 @@ songplay_table_insert = ("""
         session_id,
         location,
         user_agent)
-    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+    VALUES (%s, %s, %s, %s, %s, %s, %s)
     ON CONFLICT (songplay_id) DO NOTHING
 """)
 
