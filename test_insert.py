@@ -12,3 +12,11 @@ try:
 except Exception as e:
     print("Unable to insert songplays data")
     print(e)
+
+try:
+    result = cur.execute("SELECT * FROM songplays")
+except Exception as e:
+    print("Unable to insert songplays data")
+    print(e)
+
+print(result)

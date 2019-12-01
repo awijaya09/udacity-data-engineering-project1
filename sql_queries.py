@@ -71,7 +71,7 @@ songplay_table_insert = ("""
         session_id,
         location,
         user_agent)
-    VALUES (%s, %s, %s, %s, %s, %s, %s)
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
     ON CONFLICT (songplay_id) DO NOTHING
 """)
 
